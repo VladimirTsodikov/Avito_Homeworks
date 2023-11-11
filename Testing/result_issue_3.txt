@@ -1,0 +1,12 @@
+>>> python -m unittest -v  issue_3_test.py
+
+test_cars (issue_3_test.TestFitTransform.test_cars) ... ok
+test_cities (issue_3_test.TestFitTransform.test_cities) ... ok
+test_exception (issue_3_test.TestFitTransform.test_exception) ... ok
+test_in_or_not_in (issue_3_test.TestFitTransform.test_in_or_not_in) ... ok
+test_isinstanse (issue_3_test.TestFitTransform.test_isinstanse) ... ok
+
+----------------------------------------------------------------------
+Ran 5 tests in 0.005s
+
+OK

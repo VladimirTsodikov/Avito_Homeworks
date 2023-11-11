@@ -1,0 +1,39 @@
+>> python -m doctest -v morse.py
+
+Failed example:
+    encode('TAXI')
+Expected:
+    '-  .-  -..-  ..'
+Got:
+    '- .- -..- ..'
+Trying:
+    encode('SHIP, SHOP')
+Expecting:
+    '... .... .. .--. --..--   ... .... --- .--.'
+ok
+Trying:
+    encode('HELLO')  # doctest: +NORMALIZE_WHITESPACE
+Expecting:
+    '....  .  .-..  .-..  ---'
+ok
+Trying:
+    encode('128')
+Expecting:
+    '.---- ..--- ---..'
+ok
+Trying:
+    raise encode('5+2')  # doctest: +IGNORE_EXCEPTION_DETAIL
+Expecting:
+    Traceback (most recent call last):
+      ...
+    KeyError
+ok
+2 items had no tests:
+    morse
+    morse.decode
+**********************************************************************
+1 items had failures:
+   1 of   6 in morse.encode
+6 tests in 3 items.
+5 passed and 1 failed.
+***Test Failed*** 1 failures.
