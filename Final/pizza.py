@@ -1,116 +1,77 @@
 from random import randint
 
 
+class WrongPizzaSizeException(ValueError):
+    """Вызывается, когда у пиццы нет такого варианта размера,
+    который ввёл пользователь"""
+
+
 class Pizza:
-    def __init__(self, name: str, size: str):
-        self.name = name  # название пиццы
-        self.size = size  # выбранный размер пиццы
-        self.recipe = {}  # ингридиенты и вес в граммах
+    name = ''  # название пиццы
+    icon = ''  # иконка пиццы
+    # Словарь рецептов. Ключи - доступные для заказа размеры пиццы,
+    # значения - словари, состоящие из ингридинтов и веса в граммах
+    recipes = {}
+
+    def __init__(self, size: str):
+        try:
+            if size not in self.recipes:  # проверка доступности выбора такого размера
+                raise WrongPizzaSizeException
+            self.size = size  # выбранный размер пиццы
+            self.recipe = self.recipes[size]  # ингридиенты и вес в граммах
+        except WrongPizzaSizeException:
+            print('Данная пицца не может иметь такой размер')
 
     def dict(self) -> dict:
-        return self.recipe
+        if self.recipe:
+            return self.recipe
 
-    def __eq__(self, __other: object) -> bool:
-        if self.name != __other.name:
+    def __eq__(self, other: object) -> bool:
+        if not isinstance(other, Pizza):
             return False
-        if self.size != __other.size:
+        if self.name != other.name:
+            return False
+        if self.size != other.size:
             return False
         return True
 
 
 class Margherita(Pizza):
-    @staticmethod
-    def var_sizes():
-        """Возвращает доступные для заказа размеры этой пиццы"""
-        return {'L', 'XL'}
-
-    @staticmethod
-    def icon():
-        return '🍅'
+    name = 'Margherita'
+    icon = '🍅'
+    recipes = {
+        'L': {'tomato sauce': 50, 'mozzarella': 150, 'tomatoes': 250, },
+        'XL': {'tomato sauce': 70, 'mozzarella': 200, 'tomatoes': 350, },
+    }
 
     def __init__(self, size: str):
-        if size not in Margherita.var_sizes():
-            raise SyntaxError('Данная пицца не может иметь такой размер')
-        super().__init__("Margherita", size)
-
-        match self.size:
-            case 'L':
-                self.recipe = {
-                    'tomato sauce': 50,
-                    'mozzarella': 150,
-                    'tomatoes': 250,
-                }
-            case 'XL':
-                self.recipe = {
-                    'tomato sauce': 70,
-                    'mozzarella': 200,
-                    'tomatoes': 350,
-                }
-            # если добавятся другие размеры для этой пиццы - добавить 'case'
+        super().__init__(size)
 
 
 class Pepperoni(Pizza):
-    @staticmethod
-    def var_sizes():
-        """Возвращает доступные для заказа размеры этой пиццы"""
-        return {'L', 'XL'}
-
-    @staticmethod
-    def icon():
-        return '🍕'
+    name = 'Pepperoni'
+    icon = '🍕'
+    recipes = {
+        'L': {'tomato sauce': 65, 'mozzarella': 120, 'pepperoni': 260, },
+        'XL': {'tomato sauce': 85, 'mozzarella': 180, 'pepperoni': 350, },
+    }
 
     def __init__(self, size: str):
-        if size not in Pepperoni.var_sizes():
-            raise SyntaxError('Данная пицца не может иметь такой размер')
-        super().__init__("Pepperoni", size)
-
-        match self.size:
-            case 'L':
-                self.recipe = {
-                    'tomato sauce': 65,
-                    'mozzarella': 120,
-                    'pepperoni': 260,
-                }
-            case 'XL':
-                self.recipe = {
-                    'tomato sauce': 85,
-                    'mozzarella': 180,
-                    'pepperoni': 350,
-                }
-            # если добавятся другие размеры для этой пиццы - добавить 'case'
+        super().__init__(size)
 
 
 class Hawaiian(Pizza):
-    @staticmethod
-    def var_sizes():
-        """Возвращает доступные для заказа размеры этой пиццы"""
-        return {'L', 'XL'}
-
-    @staticmethod
-    def icon():
-        return '🍍'
+    name = 'Hawaiian'
+    icon = '🍍'
+    recipes = {
+        'L': {'tomato sauce': 40, 'mozzarella': 110,
+              'chicken': 250, 'pineapples': 80, },
+        'XL': {'tomato sauce': 65, 'mozzarella': 160,
+               'chicken': 340, 'pineapples': 115, },
+    }
 
     def __init__(self, size: str):
-        if size not in Hawaiian.var_sizes():
-            raise SyntaxError('Данная пицца не может иметь такой размер')
-        super().__init__("Hawaiian", size)
-
-        match self.size:
-            case 'L':
-                self.recipe = {
-                    'tomato sauce': 40,
-                    'mozzarella': 110,
-                    'chicken': 250,
-                    'pineapples': 80
-                }
-            case 'XL':
-                self.recipe = {
-                    'tomato sauce': 65,
-                    'mozzarella': 160,
-                    'chicken': 340,
-                    'pineapples': 115
-                }
-            # если добавятся другие размеры для этой пиццы - добавить 'case'
+        super().__init__(size)
 
 
 def log(function_to_decorate):
@@ -126,4 +87,6 @@ def bake(pizza: Pizza):
 
 
 if __name__ == '__main__':
-    bake(Margherita('L'))
+    # bake(Margherita('X'))
+    mar = Margherita('X')
+    print(2+4)
