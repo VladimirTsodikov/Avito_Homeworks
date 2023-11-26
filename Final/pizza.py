@@ -74,19 +74,31 @@ class Hawaiian(Pizza):
         super().__init__(size)
 
 
-def log(function_to_decorate):
+def log_bake(func):
     def time_bake(pizza: Pizza):
-        print(function_to_decorate.__name__, end=' ')
-        function_to_decorate(pizza)
+        func(pizza)
+        print(f'{randint(10, 25)} мин!')
     return time_bake
 
 
-@log
+@log_bake
 def bake(pizza: Pizza):
-    print(f'- {randint(7, 14)} мин!')
+    print(f'🔥 Приготовили пиццу {pizza} в печи за', end=' ')
 
 
-if __name__ == '__main__':
+def log_delivery(func):
+    def time_delivery(pizza: Pizza):
+        func(pizza)
+        print(f'{randint(20, 60)} мин!')
+    return time_delivery
+
+
+@log_delivery
+def pizza_delivery(pizza: Pizza):
+    print(f'📦 Доставили пиццу {pizza} за', end=' ')
+
+
+if __name__ == '__main__':  # pragma: no cover
     # bake(Margherita('X'))
-    mar = Margherita('X')
-    print(2+4)
+    mar = Margherita('XL')
+    print(mar.dict())
