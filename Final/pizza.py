@@ -28,7 +28,7 @@ class Pizza:
 
     def __eq__(self, other: object) -> bool:
         if not isinstance(other, Pizza):
-            return False
+            return NotImplemented
         if self.name != other.name:
             return False
         if self.size != other.size:
@@ -43,9 +43,9 @@ class Margherita(Pizza):
         'L': {'tomato sauce': 50, 'mozzarella': 150, 'tomatoes': 250, },
         'XL': {'tomato sauce': 70, 'mozzarella': 200, 'tomatoes': 350, },
     }
-
-    def __init__(self, size: str):
-        super().__init__(size)
+    # не нужно: автоматически сработает __init__ базового класса Pizza
+    # def __init__(self, size: str):
+    #     super().__init__(size)
 
 
 class Pepperoni(Pizza):
@@ -55,9 +55,6 @@ class Pepperoni(Pizza):
         'L': {'tomato sauce': 65, 'mozzarella': 120, 'pepperoni': 260, },
         'XL': {'tomato sauce': 85, 'mozzarella': 180, 'pepperoni': 350, },
     }
-
-    def __init__(self, size: str):
-        super().__init__(size)
 
 
 class Hawaiian(Pizza):
@@ -69,9 +66,6 @@ class Hawaiian(Pizza):
         'XL': {'tomato sauce': 65, 'mozzarella': 160,
                'chicken': 340, 'pineapples': 115, },
     }
-
-    def __init__(self, size: str):
-        super().__init__(size)
 
 
 def log_bake(func):
