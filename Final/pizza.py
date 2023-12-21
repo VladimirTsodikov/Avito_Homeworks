@@ -1,4 +1,5 @@
 from random import randint
+from typing import Callable
 
 
 class WrongPizzaSizeException(ValueError):
@@ -14,16 +15,13 @@ class Pizza:
     recipes = {}
 
     def __init__(self, size: str):
-        try:
-            if size not in self.recipes:  # проверка доступности выбора такого размера
-                raise WrongPizzaSizeException
-            self.size = size  # выбранный размер пиццы
-            self.recipe = self.recipes[size]  # ингридиенты и вес в граммах
-        except WrongPizzaSizeException:
-            print('Данная пицца не может иметь такой размер')
+        if size not in self.recipes:  # проверка доступности выбора такого размера
+            raise WrongPizzaSizeException('Данная пицца не может иметь такой размер')
+        self.size = size  # выбранный размер пиццы
+        self.recipe = self.recipes[size]  # ингридиенты и вес в граммах
 
     def dict(self) -> dict:
-        if self.recipe:
+        if hasattr(self, 'recipe'):
             return self.recipe
 
     def __eq__(self, other: object) -> bool:
@@ -68,31 +66,24 @@ class Hawaiian(Pizza):
     }
 
 
-def log_bake(func):
-    def time_bake(pizza: Pizza):
+def log(func: Callable) -> Callable:
+    def time(pizza: Pizza, min_time: int, max_time: int):  # обычно называют wrapper
         func(pizza)
-        print(f'{randint(10, 25)} мин!')
-    return time_bake
+        print(f'{randint(min_time, max_time)} мин!\n')
+    return time
 
 
-@log_bake
+@log
 def bake(pizza: Pizza):
     print(f'🔥 Приготовили пиццу {pizza} в печи за', end=' ')
 
 
-def log_delivery(func):
-    def time_delivery(pizza: Pizza):
-        func(pizza)
-        print(f'{randint(20, 60)} мин!')
-    return time_delivery
-
-
-@log_delivery
+@log
 def pizza_delivery(pizza: Pizza):
     print(f'📦 Доставили пиццу {pizza} за', end=' ')
 
 
 if __name__ == '__main__':  # pragma: no cover
     # bake(Margherita('X'))
-    mar = Margherita('XL')
+    mar = Margherita('X')
     print(mar.dict())

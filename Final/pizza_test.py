@@ -1,5 +1,5 @@
 from click.testing import CliRunner
-from pizza import Pizza, Margherita, Pepperoni, Hawaiian
+from pizza import Pizza, Margherita, Pepperoni, Hawaiian, WrongPizzaSizeException
 from cli import order, menu
 import pytest
 
@@ -17,6 +17,16 @@ import pytest
 )
 def test_pizza_correct_sizes(source_size, expected_size):
     assert source_size == expected_size
+
+
+def test_pizza_incorrect_size():
+    with pytest.raises(WrongPizzaSizeException):
+        Margherita('X')
+    with pytest.raises(WrongPizzaSizeException):
+        Pepperoni('xl')
+    with pytest.raises(WrongPizzaSizeException) as excinfo:
+        Hawaiian('XLL')
+    assert "Данная пицца не может иметь такой размер" in str(excinfo.value)
 
 
 @pytest.mark.parametrize(
