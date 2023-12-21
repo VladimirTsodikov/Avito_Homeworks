@@ -1,7 +1,7 @@
 from keyword import iskeyword
 
 
-class jsoninit:
+class JsonInit:
     def __init__(self, json: dict):
         for key, value in json.items():
             if iskeyword(key):
@@ -9,7 +9,7 @@ class jsoninit:
             if not isinstance(value, dict):
                 setattr(self, key, value)
             else:
-                setattr(self, key, jsoninit(value))
+                setattr(self, key, JsonInit(value))
 
 
 class ColorizeMixin:
@@ -31,7 +31,7 @@ class ColorizeMixin:
             self.background_color = back_color
 
 
-class Advert(ColorizeMixin, jsoninit):
+class Advert(ColorizeMixin, JsonInit):
     price = 0
 
     def __setattr__(self, key, value: int):
@@ -45,26 +45,27 @@ class Advert(ColorizeMixin, jsoninit):
             raise ValueError("The ad must have a title")
 
 
-my = Advert({
-    "title": "iPhone X",
-    "class": "dog",
-    "price": 100,
-    "location": {
-      "address": "город Самара, улица Мориса Тореза, 50",
-      "metro_stations": ["Спортивная", "Гагаринская"]
-      }
-    }
-)
-print(my.class_)
-my.class_ = 'cat'
-print(my.class_)
-my.book = 'df'
-# print(my.__dict__)
-my.price = 4
-# print(my.__dict__)
-my.price = 45
-# print(my.__dict__)
+if __name__ == "__main__":
+    my = Advert({
+        "title": "iPhone X",
+        "class": "dog",
+        "price": 100,
+        "location": {
+            "address": "город Самара, улица Мориса Тореза, 50",
+            "metro_stations": ["Спортивная", "Гагаринская"]
+        }
+        }
+    )
+    print(my.class_)
+    my.class_ = 'cat'
+    print(my.class_)
+    my.book = 'df'
+    # print(my.__dict__)
+    my.price = 4
+    # print(my.__dict__)
+    my.price = 45
+    # print(my.__dict__)
 
-print(my)
-my.repr_color_code(31, 5, 45)
-print(my)
+    print(my)
+    my.repr_color_code(31, 5, 42)
+    print(my)
