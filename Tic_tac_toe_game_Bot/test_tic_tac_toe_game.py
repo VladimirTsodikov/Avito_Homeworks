@@ -6,7 +6,7 @@ from telegram import InlineKeyboardButton
 from tic_tac_toe_game import SIZE, get_default_state, \
     generate_keyboard, start, player_move, \
     CONTINUE_GAME, FINISH_GAME, \
-    CROSS, ZERO, FREE_SPACE, game, game_over
+    CROSS, FREE_SPACE, game, game_over
 
 
 def test_size_default_state():
@@ -97,8 +97,8 @@ async def test_game_over():
     update = AsyncMock()
     context = AsyncMock()
     who = "a"
-    with patch("before_end") as mocked_bend, patch(
-        "end"
+    with patch("tic_tac_toe_game.before_end") as mocked_bend, patch(
+        "tic_tac_toe_game.end"
     ) as mocked_end:
         mocked_end.return_value = 0
         assert await game_over(update, context, who) == 0
@@ -116,13 +116,13 @@ async def test_game_1():
     update.callback_query = AsyncMock()
     update.callback_query.answer = get_answer
 
-    with patch("player_move") as mocked:
+    with patch("tic_tac_toe_game.player_move") as mocked:
         mocked.return_value = True
         assert await game(update, context) == CONTINUE_GAME
         mocked.assert_awaited_once()
 
-    with patch("player_move") as mocked, patch(
-        "continue_or_end"
+    with patch("tic_tac_toe_game.player_move") as mocked, patch(
+        "tic_tac_toe_game.continue_or_end"
     ) as cont_mocked:
         cont_mocked.return_value = 2
         mocked.return_value = False
@@ -130,15 +130,15 @@ async def test_game_1():
         mocked.assert_awaited_once()
 
 
-# @pytest.mark.asyncio
-# async def test_game_2():
-#     async def get_answer():
-#         return False
+@pytest.mark.asyncio
+async def test_game_2():
+    async def get_answer():
+        return False
 
-#     update = AsyncMock()
-#     context = AsyncMock()
-#     update.callback_query = AsyncMock()
-#     update.callback_query.answer = get_answer
+    update = AsyncMock()
+    context = AsyncMock()
+    update.callback_query = AsyncMock()
+    update.callback_query.answer = get_answer
 
-#     # with patch("logging.info"):
-    #    assert await game(update, context) == CONTINUE_GAME
+    with patch("logging.info"):
+        assert await game(update, context) == CONTINUE_GAME

@@ -3,7 +3,7 @@
 Бот для игры в крестики-нолики в Телеграм
 """
 import datetime
-# import logging
+import logging
 import os
 from copy import deepcopy
 
@@ -33,7 +33,7 @@ DEFAULT_STATE = [[FREE_SPACE for _ in range(SIZE)] for _ in range(SIZE)]
 
 def get_fname():
     """Get filename for new log file"""
-    return datetime.datetime.now().strftime("%d:%m:%Y_%H:%M:%S")
+    return datetime.datetime.now().strftime("%d_%m_%Y__%H_%M_%S")
 
 
 def get_default_state():
@@ -102,17 +102,17 @@ async def check_end(update, context) -> int:
     """Проверка, произошёл ли выигрыш/проигрыш/ничья"""
     if won(context.user_data["keyboard_state"], CROSS):
         # выиграл игрок
-        # logging.info("player won")
+        logging.info("player won")
         return await game_over(update, context, "player")
     else:
         # Если бот сходил - проверяем, выиграл ли
         # Если бот не сходил (некуда) - ничья.
         if bot_move(context.user_data["keyboard_state"]):
             if won(context.user_data["keyboard_state"], ZERO):
-                # logging.info("bot won")
+                logging.info("bot won")
                 return await game_over(update, context, "bot")
         else:
-            # logging.info("happy won")
+            logging.info("happy won")
             return await game_over(update, context, "happy")
     return CONTINUE_GAME
 
@@ -149,8 +149,8 @@ async def game(update: Update, context: ContextTypes.DEFAULT_TYPE) -> int:
             return CONTINUE_GAME
 
         return await continue_or_end(update, context, query)
-    # else:
-    #    logging.info("Problems")
+    else:
+        logging.info("Problems")
     return CONTINUE_GAME
 
 
@@ -172,43 +172,58 @@ def bot_move(fields: list[list[str]]) -> bool:
     return True
 
 
-def won(fields: list[list[str]], who: str) -> bool:
-    """Check if crosses or zeros have won the game"""
-    win_alone_diag1 = True
+def won_by_main_diag(fields: list[list[str]], who: str) -> bool:
+    "Проверка, есть ли выигрышная комбинация на главной диагонали"
+    win = True
     for i in range(len(fields)):
         if fields[i][i] != who:
-            win_alone_diag1 = False
+            win = False
             break
-    if win_alone_diag1 is True:
-        return True
+    return win
 
-    win_alone_diag2 = True
+
+def won_by_side_diag(fields: list[list[str]], who: str) -> bool:
+    "Проверка, есть ли выигрышная комбинация на побочной диагонали"
+    win = True
     for i in range(len(fields)):
         if fields[i][SIZE-1-i] != who:
-            win_alone_diag2 = False
+            win = False
             break
-    if win_alone_diag2 is True:
-        return True
+    return win
 
+
+def won_by_rows(fields: list[list[str]], who: str) -> bool:
+    "Проверка, есть ли выигрышная комбинация хотя бы в одной строке"
     for i in range(len(fields)):
-        win_alone_line = True
+        win = True
         for j in range(len(fields)):
             if fields[i][j] != who:
-                win_alone_line = False
+                win = False
                 break
-        if win_alone_line is True:
+        if win is True:
             return True
+    return False
 
+
+def won_by_columns(fields: list[list[str]], who: str) -> bool:
+    "Проверка, есть ли выигрышная комбинация хотя бы в одном столбце"
     for i in range(len(fields)):
-        win_alone_column = True
+        win = True
         for j in range(len(fields)):
             if fields[j][i] != who:
-                win_alone_column = False
+                win = False
                 break
-        if win_alone_column is True:
+        if win is True:
             return True
-
     return False
+
+
+def won(fields: list[list[str]], who: str) -> bool:
+    """Проверка выигрыша для игрока who"""
+    return (won_by_main_diag(fields, who) or
+            won_by_side_diag(fields, who) or
+            won_by_rows(fields, who) or
+            won_by_columns(fields, who))
 
 
 async def before_end(update: Update, context: ContextTypes.DEFAULT_TYPE, who: str) -> None:
@@ -251,13 +266,13 @@ async def end(update: Update, context: ContextTypes.DEFAULT_TYPE) -> int:
 def main() -> None:
     """Run the bot"""
 
-    # logging.basicConfig(
-    #     format="%(asctime)s - %(name)s - %(levelname)s - %(message)s",
-    #     level=logging.INFO,
-    #     filename=f"logs/{get_fname()}.log",
-    #     filemode="a",
-    # )
-    # logging.getLogger("httpx").setLevel(logging.WARNING)
+    logging.basicConfig(
+        format="%(asctime)s - %(name)s - %(levelname)s - %(message)s",
+        level=logging.INFO,
+        filename=f"logs/{get_fname()}.log",
+        filemode="a",
+    )
+    logging.getLogger("httpx").setLevel(logging.WARNING)
 
     # Create the Application and pass it your bot's token.
     application = Application.builder().token(TOKEN).build()
